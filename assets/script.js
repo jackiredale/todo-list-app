@@ -5,37 +5,58 @@ const message = document.querySelector('#message');
 
 let todos = [];
 
+let editingIndex = null;
+
 function renderTodo() {
     todoList.innerHTML = '';
 
     todos.forEach((todo, index) => {
         const li = document.createElement('li');
         
-        li.innerHTML = `
-            <span>${todo}</span>
-            <button onclick="editTodo(${index})" aria-label="Edit task">✎</button>
-            <button onclick="deleteTodo(${index})" aria-label="Delete task">×</button>
-        `;
+        if(editingIndex === index) {
+            li.innerHTML = `
+                <input type="text" value="${todo}" id="edit-input-${index}" />
+                <button onclick="saveTodo(${index})" aria-label="Save task">💾</button>
+                <button onclick="cancelEdit()" aria-label="Cancel edit">✖</button>
+            `;
+        } else {
+            li.innerHTML = `
+                <span>${todo}</span>
+                <button onclick="editTodo(${index})" aria-label="Edit task">✎</button>
+                <button onclick="deleteTodo(${index})" aria-label="Delete task">×</button>
+            `;
+        }   
 
         todoList.appendChild(li);
     });
 }
 
 function editTodo(index) {
-    const updatedTodo = prompt("Edit your task:", todos[index]);
+    editingIndex = index;
+    renderTodo();
+}
 
-    if (updatedTodo === null) {
-        return;
-    }
+function cancelEdit() {
+    editingIndex = null;
+    renderTodo();
+}
 
-    const trimmedTodo = updatedTodo.trim();
+function saveTodo(index) {
+    const editInput = document.querySelector(`#edit-input-${index}`);
+    const updatedTodo = editInput.value.trim();
 
-    if(trimmedTodo === "") {
+    if(updatedTodo === "") {
         message.textContent = "Task cannot be empty";
         return;
     }
 
-    todos[index] = trimmedTodo;
+    if(todos.includes(updatedTodo) && updatedTodo !== todos[index]) {
+        message.textContent = "Task already exists";
+        return;
+    }
+
+    todos[index] = updatedTodo;
+    editingIndex = null;
     message.textContent = "";
     renderTodo();
 }
