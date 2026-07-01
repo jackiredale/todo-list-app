@@ -38,6 +38,7 @@ function editTodo(index) {
 
 function cancelEdit() {
     editingIndex = null;
+    message.textContent = "";
     renderTodo();
 }
 
