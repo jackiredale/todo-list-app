@@ -13,11 +13,31 @@ function renderTodo() {
         
         li.innerHTML = `
             <span>${todo}</span>
-            <button onclick="deleteTodo(${index})">Delete</button>
+            <button onclick="editTodo(${index})" aria-label="Edit task">✎</button>
+            <button onclick="deleteTodo(${index})" aria-label="Delete task">×</button>
         `;
 
         todoList.appendChild(li);
     });
+}
+
+function editTodo(index) {
+    const updatedTodo = prompt("Edit your task:", todos[index]);
+
+    if (updatedTodo === null) {
+        return;
+    }
+
+    const trimmedTodo = updatedTodo.trim();
+
+    if(trimmedTodo === "") {
+        message.textContent = "Task cannot be empty";
+        return;
+    }
+
+    todos[index] = trimmedTodo;
+    message.textContent = "";
+    renderTodo();
 }
 
 todoForm.addEventListener("submit", function(event) {
